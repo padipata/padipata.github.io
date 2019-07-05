@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Javascripts on padipata blog</title>
+    <link>https://padipata.github.io/javascript/</link>
+    <description>Recent content in Javascripts on padipata blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 05 Jul 2019 14:39:14 +0800</lastBuildDate>
+    
+	<atom:link href="https://padipata.github.io/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>谈谈JavaScript的深浅拷贝</title>
+      <link>https://padipata.github.io/javascript/kaobei/</link>
+      <pubDate>Fri, 05 Jul 2019 14:39:14 +0800</pubDate>
+      
+      <guid>https://padipata.github.io/javascript/kaobei/</guid>
+      <description>为什么要进行拷贝 var obj1={ value: &#39;a&#39; } var obj2 = obj1; obj2.value=&#39;b&#39;; console.log(obj1);//{ value: &#39;b&#39; }  因为对象是引用类型，所以赋值时的操作仅是赋予相同的地址，当对其中一个对象进行操作时，就会影响其他的对象。解决这个问题就需要拷贝了。
+浅拷贝： 使用原生的 Object.assign() 方法就可以实现浅拷贝
+var obj1={ value: &#39;a&#39; } var obj2 = Object.assign({},obj1); obj2.value=&#39;b&#39;; console.log(obj1);//{ value: &#39;a&#39; }  但是如果拷贝的源对象当中包含对象时，OBject.assign()方法只会拷贝对象的引用地址
+var obj1={ value: &#39;a&#39;, obj3:{ value2: &#39;c&#39; } } var obj2 = Object.assign({},obj1); obj2.obj3.value2=&#39;b&#39;; console.log(obj1);//{ value: &#39;a&#39;, obj3:{ value2: &#39;b&#39; } }  深拷贝 如果要拷贝的对象中包含对象，就需要深拷贝了，一般使用原生的方法JSON.parse(JSON.stringify(obj))
+j1={ value: &#39;a&#39;, obj3:{ value2: &#39;c&#39; }, arr:[1,2,3] } var obj2 = JSON.</description>
+    </item>
+    
+  </channel>
+</rss>

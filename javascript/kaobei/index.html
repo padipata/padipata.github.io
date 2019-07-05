@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+    <base href="/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="author" content="padipata">
+
+<meta name="description" content="">
+
+<title>谈谈JavaScript的深浅拷贝</title>
+<meta name="generator" content="Hugo 0.55.6" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet" type="text/css">
+<link  href="https://padipata.github.io//css/theme.min.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div class="page-container container-fluid">
+<div class="col-md-3 menu">
+    <nav class="col-md-3">
+    
+    <h3 class="home-link"><a href="https://padipata.github.io/">Root</a></h3>
+    <div id="last-posts" class="open">
+        <h3 data-open="last-posts">padipata blog - Most recent posts</h3>
+        <ul>
+            
+            <li><a href="https://padipata.github.io/javascript/kaobei/">谈谈JavaScript的深浅拷贝</a></li>
+            
+        </ul>
+    </div>
+    
+
+    
+
+    
+</nav>
+
+</div>
+<div class="col-md-9 content">
+
+<h1>谈谈JavaScript的深浅拷贝</h1>
+<h4>Published 07-05-2019 14:39:14</h4>
+
+
+
+<article>
+    
+
+<h2 id="为什么要进行拷贝">为什么要进行拷贝</h2>
+
+<pre><code class="language-JavaScript">var obj1={
+    value: 'a'
+}
+var obj2 = obj1;
+obj2.value='b';
+console.log(obj1);//{ value: 'b' }
+</code></pre>
+
+<p>因为对象是引用类型，所以赋值时的操作仅是赋予相同的地址，当对其中一个对象进行操作时，就会影响其他的对象。解决这个问题就需要拷贝了。</p>
+
+<h2 id="浅拷贝">浅拷贝：</h2>
+
+<p>使用原生的 <code>Object.assign()</code> 方法就可以实现浅拷贝</p>
+
+<pre><code class="language-JavaScript">var obj1={
+    value: 'a'
+}
+var obj2 = Object.assign({},obj1);
+obj2.value='b';
+console.log(obj1);//{ value: 'a' }
+</code></pre>
+
+<p>但是如果拷贝的源对象当中包含对象时，<code>OBject.assign()</code>方法只会拷贝对象的引用地址</p>
+
+<pre><code class="language-JavaScript">var obj1={
+    value: 'a',
+    obj3:{
+        value2: 'c'
+    }
+}
+var obj2 = Object.assign({},obj1);
+obj2.obj3.value2='b';
+console.log(obj1);//{ value: 'a', obj3:{ value2: 'b' } }
+</code></pre>
+
+<h2 id="深拷贝">深拷贝</h2>
+
+<p>如果要拷贝的对象中包含对象，就需要深拷贝了，一般使用原生的方法<code>JSON.parse(JSON.stringify(obj))</code></p>
+
+<pre><code class="language-JavaScript">j1={
+    value: 'a',
+    obj3:{
+        value2: 'c'
+    },
+    arr:[1,2,3]
+}
+var obj2 = JSON.parse(JSON.stringify(obj1));
+obj2.obj3.value2='b';
+obj2.arr[0]= &quot;a&quot;;
+console.log(obj2);//{ value: 'a', obj3:{ value2: 'b' }, arr:['a',2,3] }
+console.log(obj1);//{ value: 'a', obj3:{ value2: 'c' }, arr:[1,2,3] } 没有发生改变
+</code></pre>
+
+<h2 id="实现一个对数组和对象的深拷贝的方法">实现一个对数组和对象的深拷贝的方法</h2>
+
+<pre><code class="language-JavaScript">var obj={
+    name: 'znl',
+    age: 18,
+    friend:{
+        name: 'borys',
+        age: 20
+    },
+    arr:[1,2,[3,4]]
+}
+
+function copy(obj){
+    var type=Object.prototype.toString.call(obj);
+    if(!(type == '[object Array]' || type == '[object Object]')){
+        return 'Type Error!';
+    }
+    return JSON.parse(JSON.stringify(obj));
+}
+
+var obj2= copy(obj);
+console.log(obj.friend === obj2.friend)//false
+console.log(obj.arr === obj2.arr)//false
+</code></pre>
+
+</article>
+
+
+
+</div>
+</div>
+<script src="https://padipata.github.io//js/theme.min.js" type="text/javascript"></script>
+
+
+</body>
+</html>
+
