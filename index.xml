@@ -17,7 +17,10 @@
       <pubDate>Fri, 05 Jul 2019 16:35:33 +0800</pubDate>
       
       <guid>https://padipata.github.io/vue/yinanzazheng/</guid>
-      <description> vue首页白屏（几率性） // 在config文件夹中找到index.js打开把 assetsPublicPath: &#39;/&#39; // 改成 assetsPublicPath: &#39;./&#39; // 再次执行 npm run build 就可以了。  </description>
+      <description>vue首页白屏（几率性） // 在config文件夹中找到index.js打开把 assetsPublicPath: &#39;/&#39; // 改成 assetsPublicPath: &#39;./&#39; // 再次执行 npm run build 就可以了。  消除transition闪屏 .css { -webkit-transform-style: preserve-3d; -webkit-backface-visibility: hidden; -webkit-perspective: 1000; }  history模式下404 // 服务器的404页面需要重定向到index.html(nginx) try_files $uri $uri/ /index.html;  解决vue打包vendor过大  在webpack.base.conf.js新增externals配置，表示不需要打包的文件，然后在index.html中通过CDN引入  externals: { &amp;quot;vue&amp;quot;: &amp;quot;Vue&amp;quot;, &amp;quot;vue-router&amp;quot;: &amp;quot;VueRouter&amp;quot;, &amp;quot;vuex&amp;quot;: &amp;quot;Vuex&amp;quot;, &amp;quot;element-ui&amp;quot;: &amp;quot;ELEMENT&amp;quot;, &amp;quot;BMap&amp;quot;: &amp;quot;BMap&amp;quot; }  2、使用路由懒加载
+网站被劫持植入广告  https，最稳
+ 在网站页头加入如下代码：
+&amp;lt;style&amp;gt; html{display : none ; } &amp;lt;/style&amp;gt; &amp;lt;script&amp;gt; if( self == top ) { document.</description>
     </item>
     
     <item>

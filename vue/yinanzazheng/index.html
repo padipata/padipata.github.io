@@ -61,6 +61,56 @@ assetsPublicPath: './'
 // 再次执行 npm run build 就可以了。
 </code></pre>
 
+<h2 id="消除transition闪屏">消除transition闪屏</h2>
+
+<pre><code class="language-css">.css { 
+    -webkit-transform-style: preserve-3d; 
+    -webkit-backface-visibility: hidden; 
+    -webkit-perspective: 1000; 
+} 
+</code></pre>
+
+<h2 id="history模式下404">history模式下404</h2>
+
+<pre><code>// 服务器的404页面需要重定向到index.html(nginx)
+try_files $uri $uri/ /index.html;
+</code></pre>
+
+<h2 id="解决vue打包vendor过大">解决vue打包vendor过大</h2>
+
+<ol>
+<li>在webpack.base.conf.js新增externals配置，表示不需要打包的文件，然后在index.html中通过CDN引入</li>
+</ol>
+
+<pre><code class="language-JavaScript">externals: {
+    &quot;vue&quot;: &quot;Vue&quot;,
+    &quot;vue-router&quot;: &quot;VueRouter&quot;,
+    &quot;vuex&quot;: &quot;Vuex&quot;,
+    &quot;element-ui&quot;: &quot;ELEMENT&quot;,
+    &quot;BMap&quot;: &quot;BMap&quot;
+  }
+</code></pre>
+
+<p>2、使用路由懒加载</p>
+
+<h2 id="网站被劫持植入广告">网站被劫持植入广告</h2>
+
+<ol>
+<li><p>https，最稳</p></li>
+
+<li><p>在网站页头加入如下代码：</p>
+
+<pre><code>&lt;style&gt; html{display : none ; } &lt;/style&gt;   
+&lt;script&gt;  
+if( self == top ) {  
+      document.documentElement.style.display = 'block' ;  
+} else {  
+   top.location = self.location ;  
+}  
+&lt;/script&gt;
+</code></pre></li>
+</ol>
+
 </article>
 
 
