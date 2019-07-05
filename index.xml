@@ -6,10 +6,19 @@
     <description>Recent content on padipata blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 05 Jul 2019 14:39:14 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jul 2019 16:35:33 +0800</lastBuildDate>
     
 	<atom:link href="https://padipata.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>vue疑难杂症</title>
+      <link>https://padipata.github.io/vue/yinanzazheng/</link>
+      <pubDate>Fri, 05 Jul 2019 16:35:33 +0800</pubDate>
+      
+      <guid>https://padipata.github.io/vue/yinanzazheng/</guid>
+      <description> vue首页白屏（几率性） // 在config文件夹中找到index.js打开把 assetsPublicPath: &#39;/&#39; // 改成 assetsPublicPath: &#39;./&#39; // 再次执行 npm run build 就可以了。  </description>
+    </item>
     
     <item>
       <title>谈谈JavaScript的深浅拷贝</title>
