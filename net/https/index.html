@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<head>
+    <base href="/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="author" content="padipata">
+
+<meta name="description" content="">
+
+<title>https介绍及中间人攻击</title>
+<meta name="generator" content="Hugo 0.55.6" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet" type="text/css">
+<link  href="https://padipata.github.io//css/theme.min.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div class="page-container container-fluid">
+<div class="col-md-3 menu">
+    <nav class="col-md-3">
+    
+    <h3 class="home-link"><a href="https://padipata.github.io/">Root</a></h3>
+    <div id="last-posts" class="open">
+        <h3 data-open="last-posts">padipata blog - Most recent posts</h3>
+        <ul>
+            
+            <li><a href="https://padipata.github.io/net/https/">https介绍及中间人攻击</a></li>
+            
+            <li><a href="https://padipata.github.io/vue/yinanzazheng/">vue疑难杂症</a></li>
+            
+            <li><a href="https://padipata.github.io/javascript/kaobei/">谈谈JavaScript的深浅拷贝</a></li>
+            
+        </ul>
+    </div>
+    
+
+    
+
+    
+</nav>
+
+</div>
+<div class="col-md-9 content">
+
+<h1>https介绍及中间人攻击</h1>
+<h4>Published 07-09-2019 21:55:01</h4>
+
+
+
+<article>
+    
+
+<h2 id="ssl或tls握手的概述">SSL或TLS握手的概述</h2>
+
+<p>SSL或TLS握手建立了用于客户端和服务端通信的秘钥。</p>
+
+<p>客户端和服务端SSL或TLS能够相互通信的基本步骤：</p>
+
+<ul>
+<li>确认使用协议的版本</li>
+<li>选择加密算法</li>
+<li>通过交换和验证数字证书对彼此进行身份验证</li>
+<li>使用非对称加密技术生成共享密钥，避免了密钥分发问题。然后SSL或TLS使用共享密钥对消息进行对称加密解密，这比非对称加密更快</li>
+</ul>
+
+<p>综上所述SSL握手的步骤如下：</p>
+
+<ol>
+<li>SSL或TLS客户端先向服务端发送一个加密通信请求，叫做ClientHello请求。该请求包含以下信息：
+
+<ul>
+<li>客户端支持的SSL或者TLS版本</li>
+<li>客户端生成的随机数，用于生成后续通信的随机字符串（&rdquo;对话密钥&rdquo;）</li>
+<li>客户端支持的加密算法</li>
+</ul></li>
+<li>SSL或TLS服务端收到客户端请求后，向客户端发出响应，叫做ServerHello。该响应包含以下信息：
+
+<ul>
+<li>服务端从客户端提供的SSL或TLS列表中选择的版本</li>
+<li>Sesstion ID 和 另外生成的随机数</li>
+<li>服务端的数字证书（如果服务端需要用于客户端身份验证的数字证书，则服务端发送一个客户端证书请求，其中包含受支持的证书类型列表和可接受的认证机构(CAs)的专有名称。）</li>
+<li>确认使用的加密算法</li>
+</ul></li>
+<li>客户端收到服务端响应后，首先校验服务端发来的数字证书决定是否继续通信。</li>
+<li>证书校验通过，会像服务端发送以下信息：
+
+<ul>
+<li>生成一个随机数，并对这个随机数用从服务端数字证书中取出的公钥加密（用与生成后续通信的“随机密钥”）</li>
+</ul></li>
+<li>如果服务端发送了一个客户端证书请求，客户端将会发送一个用客户端私钥加密的随机字符串和客户端的数字证书，或者没有数字证书的警告。在某些强制客户端证书的实现中，如果客户端没有数字证书责握手会失败</li>
+<li>服务端接受并验证客户端证书</li>
+<li>客户端向服务端发送一条完成的消息，该消息使用密钥加密，表示握手的客户端部分已经完成。</li>
+<li>服务端向客户端发送一条完成的消息，该消息使用密钥加密，表示握手的服务端部分已经完成</li>
+<li>在SSL或TLS会话期间，服务端和客户端现在可以交换使用共享密钥对称加密的消息</li>
+</ol>
+
+<h2 id="中间人攻击">中间人攻击</h2>
+
+<p>中间人攻击过程如下：</p>
+
+<ul>
+<li>服务器向客户端发送公钥。</li>
+<li>攻击者截获公钥，保留在自己手上。</li>
+<li>然后攻击者自己生成一个【伪造的】公钥，发给客户端。</li>
+<li>客户端收到伪造的公钥后，生成加密hash值发给服务器。</li>
+<li>攻击者获得加密hash值，用自己的私钥解密获得真秘钥。</li>
+<li>同时生成假的加密hash值，发给服务器。</li>
+<li>服务器用私钥解密获得假秘钥。</li>
+<li>服务器用加秘钥加密传输信息</li>
+</ul>
+
+<p>防范方法：</p>
+
+<ul>
+<li>服务端在发送浏览器的公钥中加入CA证书，浏览器可以验证CA证书的有效性</li>
+</ul>
+
+</article>
+
+
+
+</div>
+</div>
+<script src="https://padipata.github.io//js/theme.min.js" type="text/javascript"></script>
+
+
+</body>
+</html>
+

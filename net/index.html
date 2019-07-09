@@ -8,7 +8,7 @@
 
 <meta name="description" content="">
 
-<title>padipata blog</title>
+<title>Nets</title>
 <meta name="generator" content="Hugo 0.55.6" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
@@ -48,23 +48,6 @@
 
 
 <div class="articles-list">
-    
-    <article>
-        <h3><a href="https://padipata.github.io/javascript/kaobei/">谈谈JavaScript的深浅拷贝</a> - 2019-07-05 14:39:14</h3>
-        为什么要进行拷贝 var obj1={ value: 'a' } var obj2 = obj1; obj2.value='b'; console.log(obj1);//{ value: 'b' }  因为对象是引用类型，所以赋值时的操作仅是赋予相同的地址，当对其中一个对象进行操作时，就会影响其他的对象。解决这个问题就需要拷贝了。
-浅拷贝： 使用原生的 Object.assign() 方法就可以实现浅拷贝
-var obj1={ value: 'a' } var obj2 = Object.assign({},obj1); obj2.value='b'; console.log(obj1);//{ value: 'a' }  但是如果拷贝的源对象当中包含对象时，OBject.assign()方法只会拷贝对象的引用地址
-var obj1={ value: 'a', obj3:{ value2: 'c' } } var obj2 = Object.assign({},obj1); obj2.obj3.value2='b'; console.log(obj1);//{ value: 'a', obj3:{ value2: 'b' } }  深拷贝 如果要拷贝的对象中包含对象，就需要深拷贝了，一般使用原生的方法JSON.parse(JSON.stringify(obj))
-j1={ value: 'a', obj3:{ value2: 'c' }, arr:[1,2,3] } var obj2 = JSON.
-    </article>
-    
-    <article>
-        <h3><a href="https://padipata.github.io/vue/yinanzazheng/">vue疑难杂症</a> - 2019-07-05 16:35:33</h3>
-        vue首页白屏（几率性） // 在config文件夹中找到index.js打开把 assetsPublicPath: '/' // 改成 assetsPublicPath: './' // 再次执行 npm run build 就可以了。  消除transition闪屏 .css { -webkit-transform-style: preserve-3d; -webkit-backface-visibility: hidden; -webkit-perspective: 1000; }  history模式下404 // 服务器的404页面需要重定向到index.html(nginx) try_files $uri $uri/ /index.html;  解决vue打包vendor过大  在webpack.base.conf.js新增externals配置，表示不需要打包的文件，然后在index.html中通过CDN引入  externals: { &quot;vue&quot;: &quot;Vue&quot;, &quot;vue-router&quot;: &quot;VueRouter&quot;, &quot;vuex&quot;: &quot;Vuex&quot;, &quot;element-ui&quot;: &quot;ELEMENT&quot;, &quot;BMap&quot;: &quot;BMap&quot; }  2、使用路由懒加载
-网站被劫持植入广告  https，最稳
- 在网站页头加入如下代码：
-&lt;style&gt; html{display : none ; } &lt;/style&gt; &lt;script&gt; if( self == top ) { document.
-    </article>
     
     <article>
         <h3><a href="https://padipata.github.io/net/https/">https介绍及中间人攻击</a> - 2019-07-09 21:55:01</h3>

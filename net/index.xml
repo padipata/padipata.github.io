@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>padipata blog</title>
-    <link>https://padipata.github.io/</link>
-    <description>Recent content on padipata blog</description>
+    <title>Nets on padipata blog</title>
+    <link>https://padipata.github.io/net/</link>
+    <description>Recent content in Nets on padipata blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 09 Jul 2019 21:55:01 +0800</lastBuildDate>
     
-	<atom:link href="https://padipata.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://padipata.github.io/net/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -23,31 +23,6 @@
  SSL或TLS客户端先向服务端发送一个加密通信请求，叫做ClientHello请求。该请求包含以下信息：  客户端支持的SSL或者TLS版本 客户端生成的随机数，用于生成后续通信的随机字符串（&amp;rdquo;对话密钥&amp;rdquo;） 客户端支持的加密算法  SSL或TLS服务端收到客户端请求后，向客户端发出响应，叫做ServerHello。该响应包含以下信息：  服务端从客户端提供的SSL或TLS列表中选择的版本 Sesstion ID 和 另外生成的随机数 服务端的数字证书（如果服务端需要用于客户端身份验证的数字证书，则服务端发送一个客户端证书请求，其中包含受支持的证书类型列表和可接受的认证机构(CAs)的专有名称。） 确认使用的加密算法  客户端收到服务端响应后，首先校验服务端发来的数字证书决定是否继续通信。 证书校验通过，会像服务端发送以下信息：  生成一个随机数，并对这个随机数用从服务端数字证书中取出的公钥加密（用与生成后续通信的“随机密钥”）  如果服务端发送了一个客户端证书请求，客户端将会发送一个用客户端私钥加密的随机字符串和客户端的数字证书，或者没有数字证书的警告。在某些强制客户端证书的实现中，如果客户端没有数字证书责握手会失败 服务端接受并验证客户端证书 客户端向服务端发送一条完成的消息，该消息使用密钥加密，表示握手的客户端部分已经完成。 服务端向客户端发送一条完成的消息，该消息使用密钥加密，表示握手的服务端部分已经完成 在SSL或TLS会话期间，服务端和客户端现在可以交换使用共享密钥对称加密的消息  中间人攻击 中间人攻击过程如下：
  服务器向客户端发送公钥。 攻击者截获公钥，保留在自己手上。 然后攻击者自己生成一个【伪造的】公钥，发给客户端。 客户端收到伪造的公钥后，生成加密hash值发给服务器。 攻击者获得加密hash值，用自己的私钥解密获得真秘钥。 同时生成假的加密hash值，发给服务器。 服务器用私钥解密获得假秘钥。 服务器用加秘钥加密传输信息  防范方法：
  服务端在发送浏览器的公钥中加入CA证书，浏览器可以验证CA证书的有效性  </description>
-    </item>
-    
-    <item>
-      <title>vue疑难杂症</title>
-      <link>https://padipata.github.io/vue/yinanzazheng/</link>
-      <pubDate>Fri, 05 Jul 2019 16:35:33 +0800</pubDate>
-      
-      <guid>https://padipata.github.io/vue/yinanzazheng/</guid>
-      <description>vue首页白屏（几率性） // 在config文件夹中找到index.js打开把 assetsPublicPath: &#39;/&#39; // 改成 assetsPublicPath: &#39;./&#39; // 再次执行 npm run build 就可以了。  消除transition闪屏 .css { -webkit-transform-style: preserve-3d; -webkit-backface-visibility: hidden; -webkit-perspective: 1000; }  history模式下404 // 服务器的404页面需要重定向到index.html(nginx) try_files $uri $uri/ /index.html;  解决vue打包vendor过大  在webpack.base.conf.js新增externals配置，表示不需要打包的文件，然后在index.html中通过CDN引入  externals: { &amp;quot;vue&amp;quot;: &amp;quot;Vue&amp;quot;, &amp;quot;vue-router&amp;quot;: &amp;quot;VueRouter&amp;quot;, &amp;quot;vuex&amp;quot;: &amp;quot;Vuex&amp;quot;, &amp;quot;element-ui&amp;quot;: &amp;quot;ELEMENT&amp;quot;, &amp;quot;BMap&amp;quot;: &amp;quot;BMap&amp;quot; }  2、使用路由懒加载
-网站被劫持植入广告  https，最稳
- 在网站页头加入如下代码：
-&amp;lt;style&amp;gt; html{display : none ; } &amp;lt;/style&amp;gt; &amp;lt;script&amp;gt; if( self == top ) { document.</description>
-    </item>
-    
-    <item>
-      <title>谈谈JavaScript的深浅拷贝</title>
-      <link>https://padipata.github.io/javascript/kaobei/</link>
-      <pubDate>Fri, 05 Jul 2019 14:39:14 +0800</pubDate>
-      
-      <guid>https://padipata.github.io/javascript/kaobei/</guid>
-      <description>为什么要进行拷贝 var obj1={ value: &#39;a&#39; } var obj2 = obj1; obj2.value=&#39;b&#39;; console.log(obj1);//{ value: &#39;b&#39; }  因为对象是引用类型，所以赋值时的操作仅是赋予相同的地址，当对其中一个对象进行操作时，就会影响其他的对象。解决这个问题就需要拷贝了。
-浅拷贝： 使用原生的 Object.assign() 方法就可以实现浅拷贝
-var obj1={ value: &#39;a&#39; } var obj2 = Object.assign({},obj1); obj2.value=&#39;b&#39;; console.log(obj1);//{ value: &#39;a&#39; }  但是如果拷贝的源对象当中包含对象时，OBject.assign()方法只会拷贝对象的引用地址
-var obj1={ value: &#39;a&#39;, obj3:{ value2: &#39;c&#39; } } var obj2 = Object.assign({},obj1); obj2.obj3.value2=&#39;b&#39;; console.log(obj1);//{ value: &#39;a&#39;, obj3:{ value2: &#39;b&#39; } }  深拷贝 如果要拷贝的对象中包含对象，就需要深拷贝了，一般使用原生的方法JSON.parse(JSON.stringify(obj))
-j1={ value: &#39;a&#39;, obj3:{ value2: &#39;c&#39; }, arr:[1,2,3] } var obj2 = JSON.</description>
     </item>
     
   </channel>
