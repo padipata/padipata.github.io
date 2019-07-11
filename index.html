@@ -84,9 +84,11 @@ j1={ value: 'a', obj3:{ value2: 'c' }, arr:[1,2,3] } var obj2 = JSON.
  实现mysql主备复制  主要思路：A开启日志，B读取操作日志，同步执行。
  配置A主mysql  在mysql安装目录下创建目录和文件mysql/log/mysql-bin.log
  修改my.ini
-  [mysqld] server-id=1 #主机标示，整数 port=3306 log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot; #确保此文件可写 read-only=0 #主机，读写都可以 binlog-do-db=sync_test #需要备份数据库，多个写多行 binlog-ignore-db=mysql #不需要备份的数据库，多个写多行   允许mysql远程访问(lnmp服务器需要去掉防火墙)  mysql -uroot -proot mysql&gt;GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.10.*' IDENTIFIED BY 'root' WITH GRANT OPTION; mysql&gt;FLUSH PRIVILEGES;   重启A主mysql数据库  配置B备mysql  在mysql安装目录下创建目录和文件mysql/log/mysql-bin.log
+[mysqld] server-id=1 #主机标示，整数 port=3306 log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot; #确保此文件可写 read-only=0 #主机，读写都可以 binlog-do-db=sync_test #需要备份数据库，多个写多行 binlog-ignore-db=mysql #不需要备份的数据库，多个写多行  允许mysql远程访问(lnmp服务器需要去掉防火墙)
+mysql -uroot -proot mysql&gt;GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.10.*' IDENTIFIED BY 'root' WITH GRANT OPTION; mysql&gt;FLUSH PRIVILEGES;  重启A主mysql数据库
+  配置B备mysql  在mysql安装目录下创建目录和文件mysql/log/mysql-bin.log
  修改my.ini
-  [mysqld] # add for sycn test server-id=2 #从机标识 log-bin=&quot;xxx/mysql/log/mysql-bin.
+[mysqld] # add for sycn test server-id=2 #从机标识 log-bin=&quot;xxx/mysql/log/mysql-bin.
     </article>
     
 </div>
