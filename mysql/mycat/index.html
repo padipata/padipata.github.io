@@ -82,27 +82,31 @@
 <ol>
 <li><p>在mysql安装目录下创建目录和文件<code>mysql/log/mysql-bin.log</code></p></li>
 
-<li><p>修改my.ini</p>
+<li><p>修改my.ini</p></li>
+</ol>
 
-<pre><code>[mysqld]
+<pre><code class="language-JavaScript">[mysqld]
 server-id=1 #主机标示，整数
 port=3306    
 log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot;  #确保此文件可写
 read-only=0   #主机，读写都可以
 binlog-do-db=sync_test   #需要备份数据库，多个写多行
 binlog-ignore-db=mysql #不需要备份的数据库，多个写多行
-</code></pre></li>
+</code></pre>
 
-<li><p>允许mysql远程访问(lnmp服务器需要去掉防火墙)</p>
+<ol>
+<li>允许mysql远程访问(lnmp服务器需要去掉防火墙)</li>
+</ol>
 
-<pre><code>mysql -uroot -proot
+<pre><code class="language-JavaScript">mysql -uroot -proot
 
 mysql&gt;GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.10.*' IDENTIFIED BY 'root' WITH GRANT OPTION;
 
 mysql&gt;FLUSH PRIVILEGES;
-</code></pre></li>
+</code></pre>
 
-<li><p>重启A主mysql数据库</p></li>
+<ol>
+<li>重启A主mysql数据库</li>
 </ol>
 
 <h3 id="配置b备mysql">配置B备mysql</h3>
@@ -110,9 +114,10 @@ mysql&gt;FLUSH PRIVILEGES;
 <ol>
 <li><p>在mysql安装目录下创建目录和文件<code>mysql/log/mysql-bin.log</code></p></li>
 
-<li><p>修改my.ini</p>
+<li><p>修改my.ini</p></li>
+</ol>
 
-<pre><code>[mysqld]
+<pre><code class="language-JavaScript">[mysqld]
 # add for sycn test
 server-id=2                       #从机标识
 log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot; #确保此文件可写
@@ -123,21 +128,22 @@ log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot; #确保此文件可写
 #master-connect-retry=60     #如果从服务器发现主服务器断掉，重新连接的时间差(秒)
 replicate-do-db=sync_test     #只复制某个库
 replicate-ignore-db=mysql     #不复制某个库
-</code></pre></li>
+</code></pre>
 
+<ol>
 <li><p>重启B备mysql数据库</p></li>
 
-<li><p>配置B备mysql的数据来源，核实高亮处的状态是否正常。</p>
+<li><p>配置B备mysql的数据来源，核实高亮处的状态是否正常。</p></li>
+</ol>
 
-<pre><code>mysql -uroot -proot
+<pre><code class="language-JavaScript">mysql -uroot -proot
 
 mysql&gt;change master to master_host='192.168.110.1',master_port='3306',master_user='root',master_password='root';
 
 mysql&gt;slave start;
 
 mysql&gt;show slave status;
-</code></pre></li>
-</ol>
+</code></pre>
 
 <h3 id="验证同步配置结果">验证同步配置结果</h3>
 
