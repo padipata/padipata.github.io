@@ -12,7 +12,7 @@
     
     
     <item>
-      <title>mysql&#43;mycat搭建高可用集群，负载均衡，主从复制，读写分类</title>
+      <title>mysql&#43;mycat搭建高可用集群，主从复制，读写分离</title>
       <link>https://padipata.github.io/mysql/mycat/</link>
       <pubDate>Thu, 11 Jul 2019 17:33:35 +0800</pubDate>
       
