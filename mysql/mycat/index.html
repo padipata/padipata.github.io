@@ -85,7 +85,7 @@
 <li><p>修改my.ini</p></li>
 </ul>
 
-<pre><code class="language-mysql">[mysqld]
+<pre><code class="language-JavaScript">[mysqld]
 server-id=1 #主机标示，整数
 port=3306    
 log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot;  #确保此文件可写
@@ -98,7 +98,7 @@ binlog-ignore-db=mysql #不需要备份的数据库，多个写多行
 <li>允许mysql远程访问(lnmp服务器需要去掉防火墙)</li>
 </ul>
 
-<pre><code class="language-mysql">mysql -uroot -proot
+<pre><code class="language-JavaScript">mysql -uroot -proot
 
 mysql&gt;GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.10.*' IDENTIFIED BY 'root' WITH GRANT OPTION;
 
@@ -117,7 +117,7 @@ mysql&gt;FLUSH PRIVILEGES;
 <li><p>修改my.ini</p></li>
 </ul>
 
-<pre><code class="language-mysql">[mysqld]
+<pre><code class="language-JavaScript">[mysqld]
 # add for sycn test
 server-id=2                       #从机标识
 log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot; #确保此文件可写
@@ -136,7 +136,7 @@ replicate-ignore-db=mysql     #不复制某个库
 <li><p>配置B备mysql的数据来源，核实高亮处的状态是否正常。</p></li>
 </ul>
 
-<pre><code class="language-mysql">mysql -uroot -proot
+<pre><code class="language-JavaScript">mysql -uroot -proot
 
 mysql&gt;change master to master_host='192.168.110.1',master_port='3306',master_user='root',master_password='root';
 
