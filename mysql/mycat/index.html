@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+<head>
+    <base href="/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="author" content="padipata">
+
+<meta name="description" content="">
+
+<title>mysql &#43; mycat 搭建稳定高可用集群，负载均衡，主从复制，读写分类</title>
+<meta name="generator" content="Hugo 0.55.6" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet" type="text/css">
+<link  href="https://padipata.github.io//css/theme.min.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div class="page-container container-fluid">
+<div class="col-md-3 menu">
+    <nav class="col-md-3">
+    
+    <h3 class="home-link"><a href="https://padipata.github.io/">Root</a></h3>
+    <div id="last-posts" class="open">
+        <h3 data-open="last-posts">padipata blog - Most recent posts</h3>
+        <ul>
+            
+            <li><a href="https://padipata.github.io/mysql/mycat/">mysql &#43; mycat 搭建稳定高可用集群，负载均衡，主从复制，读写分类</a></li>
+            
+            <li><a href="https://padipata.github.io/net/https/">https介绍及中间人攻击</a></li>
+            
+            <li><a href="https://padipata.github.io/vue/yinanzazheng/">vue疑难杂症</a></li>
+            
+            <li><a href="https://padipata.github.io/javascript/kaobei/">谈谈JavaScript的深浅拷贝</a></li>
+            
+        </ul>
+    </div>
+    
+
+    
+
+    
+</nav>
+
+</div>
+<div class="col-md-9 content">
+
+<h1>mysql &#43; mycat 搭建稳定高可用集群，负载均衡，主从复制，读写分类</h1>
+<h4>Published 07-11-2019 17:33:35</h4>
+
+
+
+<article>
+    
+
+<h2 id="工具准备">工具准备</h2>
+
+<ul>
+<li>mysql两台（版本推荐5.5以上）：
+
+<ul>
+<li>A主mysql：192.168.10.1:3306, 用户root，密码123456</li>
+<li>B备mysql：192.168.10.2:3306, 用户root，密码123456</li>
+</ul></li>
+</ul>
+
+<blockquote>
+<p>AB两台服务器中的mysql都创建<code>sync_test</code>数据库</p>
+</blockquote>
+
+<h2 id="实现mysql主备复制">实现mysql主备复制</h2>
+
+<blockquote>
+<p>主要思路：A开启日志，B读取操作日志，同步执行。</p>
+</blockquote>
+
+<h3 id="配置a主mysql">配置A主mysql</h3>
+
+<ol>
+<li><p>在mysql安装目录下创建目录和文件<code>mysql/log/mysql-bin.log</code></p></li>
+
+<li><p>修改my.ini</p></li>
+</ol>
+
+<pre><code class="language-mysql">[mysqld]
+server-id=1 #主机标示，整数
+port=3306    
+log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot;  #确保此文件可写
+read-only=0   #主机，读写都可以
+binlog-do-db=sync_test   #需要备份数据库，多个写多行
+binlog-ignore-db=mysql #不需要备份的数据库，多个写多行
+</code></pre>
+
+<ol>
+<li>允许mysql远程访问(lnmp服务器需要去掉防火墙)</li>
+</ol>
+
+<pre><code class="language-mysql">mysql -uroot -proot
+
+mysql&gt;GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.10.*' IDENTIFIED BY 'root' WITH GRANT OPTION;
+
+mysql&gt;FLUSH PRIVILEGES;
+</code></pre>
+
+<ol>
+<li>重启A主mysql数据库</li>
+</ol>
+
+<h3 id="配置b备mysql">配置B备mysql</h3>
+
+<ol>
+<li><p>在mysql安装目录下创建目录和文件<code>mysql/log/mysql-bin.log</code></p></li>
+
+<li><p>修改my.ini</p></li>
+</ol>
+
+<pre><code class="language-mysql">[mysqld]
+# add for sycn test
+server-id=2                       #从机标识
+log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot; #确保此文件可写
+#master-host=&quot;192.168.10.1&quot; #主机Ip
+#master-user=root           #数据库访问用户名
+#master-pass=123456         #数据库访问密码
+#master-port=3306           #主机端口
+#master-connect-retry=60     #如果从服务器发现主服务器断掉，重新连接的时间差(秒)
+replicate-do-db=sync_test     #只复制某个库
+replicate-ignore-db=mysql     #不复制某个库
+</code></pre>
+
+<ol>
+<li><p>重启B备mysql数据库</p></li>
+
+<li><p>配置B备mysql的数据来源，核实高亮处的状态是否正常。</p></li>
+</ol>
+
+<pre><code class="language-mysql">mysql -uroot -proot
+
+mysql&gt;change master to master_host='192.168.110.1',master_port='3306',master_user='root',master_password='root';
+
+mysql&gt;slave start;
+
+mysql&gt;show slave status;
+</code></pre>
+
+<h3 id="验证同步配置结果">验证同步配置结果</h3>
+
+<ul>
+<li>A主mysql：使用navicat工具，在sync_test库中创建sync_table表，并添加一些数据</li>
+<li>B备mysql：使用navicat工具，查看sync_test库，可以看到sync_table表和数据已被同步</li>
+</ul>
+
+<h2 id="实现读写分离">实现读写分离</h2>
+
+<blockquote>
+<p>主要思路：使用mycat中间件，转发sql指令到后端mysql节点。mycat不负责数据库同步。</p>
+</blockquote>
+
+<p>未完待续&hellip;</p>
+
+</article>
+
+
+
+</div>
+</div>
+<script src="https://padipata.github.io//js/theme.min.js" type="text/javascript"></script>
+
+
+</body>
+</html>
+

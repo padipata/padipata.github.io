@@ -28,6 +28,8 @@
         <h3 data-open="last-posts">padipata blog - Most recent posts</h3>
         <ul>
             
+            <li><a href="https://padipata.github.io/mysql/mycat/">mysql &#43; mycat 搭建稳定高可用集群，负载均衡，主从复制，读写分类</a></li>
+            
             <li><a href="https://padipata.github.io/net/https/">https介绍及中间人攻击</a></li>
             
             <li><a href="https://padipata.github.io/vue/yinanzazheng/">vue疑难杂症</a></li>
@@ -74,6 +76,17 @@ j1={ value: 'a', obj3:{ value2: 'c' }, arr:[1,2,3] } var obj2 = JSON.
  SSL或TLS客户端先向服务端发送一个加密通信请求，叫做ClientHello请求。该请求包含以下信息：  客户端支持的SSL或者TLS版本 客户端生成的随机数，用于生成后续通信的随机字符串（&rdquo;对话密钥&rdquo;） 客户端支持的加密算法  SSL或TLS服务端收到客户端请求后，向客户端发出响应，叫做ServerHello。该响应包含以下信息：  服务端从客户端提供的SSL或TLS列表中选择的版本 Sesstion ID 和 另外生成的随机数 服务端的数字证书（如果服务端需要用于客户端身份验证的数字证书，则服务端发送一个客户端证书请求，其中包含受支持的证书类型列表和可接受的认证机构(CAs)的专有名称。） 确认使用的加密算法  客户端收到服务端响应后，首先校验服务端发来的数字证书决定是否继续通信。 证书校验通过，会像服务端发送以下信息：  生成一个随机数，并对这个随机数用从服务端数字证书中取出的公钥加密（用与生成后续通信的“随机密钥”）  如果服务端发送了一个客户端证书请求，客户端将会发送一个用客户端私钥加密的随机字符串和客户端的数字证书，或者没有数字证书的警告。在某些强制客户端证书的实现中，如果客户端没有数字证书责握手会失败 服务端接受并验证客户端证书 客户端向服务端发送一条完成的消息，该消息使用密钥加密，表示握手的客户端部分已经完成。 服务端向客户端发送一条完成的消息，该消息使用密钥加密，表示握手的服务端部分已经完成 在SSL或TLS会话期间，服务端和客户端现在可以交换使用共享密钥对称加密的消息  中间人攻击 中间人攻击过程如下：
  服务器向客户端发送公钥。 攻击者截获公钥，保留在自己手上。 然后攻击者自己生成一个【伪造的】公钥，发给客户端。 客户端收到伪造的公钥后，生成加密hash值发给服务器。 攻击者获得加密hash值，用自己的私钥解密获得真秘钥。 同时生成假的加密hash值，发给服务器。 服务器用私钥解密获得假秘钥。 服务器用加秘钥加密传输信息  防范方法：
  服务端在发送浏览器的公钥中加入CA证书，浏览器可以验证CA证书的有效性  
+    </article>
+    
+    <article>
+        <h3><a href="https://padipata.github.io/mysql/mycat/">mysql &#43; mycat 搭建稳定高可用集群，负载均衡，主从复制，读写分类</a> - 2019-07-11 17:33:35</h3>
+        工具准备  mysql两台（版本推荐5.5以上）：  A主mysql：192.168.10.1:3306, 用户root，密码123456 B备mysql：192.168.10.2:3306, 用户root，密码123456    AB两台服务器中的mysql都创建sync_test数据库
+ 实现mysql主备复制  主要思路：A开启日志，B读取操作日志，同步执行。
+ 配置A主mysql  在mysql安装目录下创建目录和文件mysql/log/mysql-bin.log
+ 修改my.ini
+  [mysqld] server-id=1 #主机标示，整数 port=3306 log-bin=&quot;xxx/mysql/log/mysql-bin.log&quot; #确保此文件可写 read-only=0 #主机，读写都可以 binlog-do-db=sync_test #需要备份数据库，多个写多行 binlog-ignore-db=mysql #不需要备份的数据库，多个写多行   允许mysql远程访问(lnmp服务器需要去掉防火墙)  mysql -uroot -proot mysql&gt;GRANT ALL PRIVILEGES ON *.* TO 'root'@'192.168.10.*' IDENTIFIED BY 'root' WITH GRANT OPTION; mysql&gt;FLUSH PRIVILEGES;   重启A主mysql数据库  配置B备mysql  在mysql安装目录下创建目录和文件mysql/log/mysql-bin.log
+ 修改my.ini
+  [mysqld] # add for sycn test server-id=2 #从机标识 log-bin=&quot;xxx/mysql/log/mysql-bin.
     </article>
     
 </div>

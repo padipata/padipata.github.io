@@ -3,6 +3,23 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://padipata.github.io/mysql/</loc>
+    <lastmod>2019-07-11T17:33:35+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://padipata.github.io/mysql/mycat/</loc>
+    <lastmod>2019-07-11T17:33:35+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://padipata.github.io/</loc>
+    <lastmod>2019-07-11T17:33:35+08:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://padipata.github.io/net/</loc>
     <lastmod>2019-07-09T21:55:01+08:00</lastmod>
     <priority>0</priority>
@@ -11,12 +28,6 @@
   <url>
     <loc>https://padipata.github.io/net/https/</loc>
     <lastmod>2019-07-09T21:55:01+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://padipata.github.io/</loc>
-    <lastmod>2019-07-09T21:55:01+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>

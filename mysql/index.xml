@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysqls on padipata blog</title>
+    <link>https://padipata.github.io/mysql/</link>
+    <description>Recent content in Mysqls on padipata blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 11 Jul 2019 17:33:35 +0800</lastBuildDate>
+    
+	<atom:link href="https://padipata.github.io/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>mysql &#43; mycat 搭建稳定高可用集群，负载均衡，主从复制，读写分类</title>
+      <link>https://padipata.github.io/mysql/mycat/</link>
+      <pubDate>Thu, 11 Jul 2019 17:33:35 +0800</pubDate>
+      
+      <guid>https://padipata.github.io/mysql/mycat/</guid>
+      <description>工具准备  mysql两台（版本推荐5.5以上）：  A主mysql：192.168.10.1:3306, 用户root，密码123456 B备mysql：192.168.10.2:3306, 用户root，密码123456    AB两台服务器中的mysql都创建sync_test数据库
+ 实现mysql主备复制  主要思路：A开启日志，B读取操作日志，同步执行。
+ 配置A主mysql  在mysql安装目录下创建目录和文件mysql/log/mysql-bin.log
+ 修改my.ini
+  [mysqld] server-id=1 #主机标示，整数 port=3306 log-bin=&amp;quot;xxx/mysql/log/mysql-bin.log&amp;quot; #确保此文件可写 read-only=0 #主机，读写都可以 binlog-do-db=sync_test #需要备份数据库，多个写多行 binlog-ignore-db=mysql #不需要备份的数据库，多个写多行   允许mysql远程访问(lnmp服务器需要去掉防火墙)  mysql -uroot -proot mysql&amp;gt;GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;192.168.10.*&#39; IDENTIFIED BY &#39;root&#39; WITH GRANT OPTION; mysql&amp;gt;FLUSH PRIVILEGES;   重启A主mysql数据库  配置B备mysql  在mysql安装目录下创建目录和文件mysql/log/mysql-bin.log
+ 修改my.ini
+  [mysqld] # add for sycn test server-id=2 #从机标识 log-bin=&amp;quot;xxx/mysql/log/mysql-bin.</description>
+    </item>
+    
+  </channel>
+</rss>
