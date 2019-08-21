@@ -8,7 +8,7 @@
 
 <meta name="description" content="">
 
-<title>Javascripts</title>
+<title>Linuxes</title>
 <meta name="generator" content="Hugo 0.55.6" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
@@ -56,12 +56,14 @@
 <div class="articles-list">
     
     <article>
-        <h3><a href="https://padipata.github.io/javascript/kaobei/">谈谈JavaScript的深浅拷贝</a> - 2019-07-05 14:39:14</h3>
-        为什么要进行拷贝 var obj1={ value: 'a' } var obj2 = obj1; obj2.value='b'; console.log(obj1);//{ value: 'b' }  因为对象是引用类型，所以赋值时的操作仅是赋予相同的地址，当对其中一个对象进行操作时，就会影响其他的对象。解决这个问题就需要拷贝了。
-浅拷贝： 使用原生的 Object.assign() 方法就可以实现浅拷贝
-var obj1={ value: 'a' } var obj2 = Object.assign({},obj1); obj2.value='b'; console.log(obj1);//{ value: 'a' }  但是如果拷贝的源对象当中包含对象时，OBject.assign()方法只会拷贝对象的引用地址
-var obj1={ value: 'a', obj3:{ value2: 'c' } } var obj2 = Object.assign({},obj1); obj2.obj3.value2='b'; console.log(obj1);//{ value: 'a', obj3:{ value2: 'b' } }  深拷贝 如果要拷贝的对象中包含对象，就需要深拷贝了，一般使用原生的方法JSON.parse(JSON.stringify(obj))
-j1={ value: 'a', obj3:{ value2: 'c' }, arr:[1,2,3] } var obj2 = JSON.
+        <h3><a href="https://padipata.github.io/linux/k8s/">CentOS7.x 安装 k8s 集群</a> - 2019-08-21 11:51:05</h3>
+        环境：CentOS7.x 一、配置 hosts vi /etc/hosts 1.2.3.4 etcd-single  二、安装单节点 etcd 下载
+wget https://github.com/etcd-io/etcd/releases/download/v3.3.11/etcd-v3.3.11-linux-amd64.tar.gz  安装
+tar xzf etcd-v3.3.11-linux-amd64.tar.gz cd etcd-v3.3.11-linux-amd64 cp etcd* /usr/local/bin/  配置
+vi /usr/lib/systemd/system/etcd.service [Unit] Description=etcd [Service] Environment=ETCD_NAME=etcd-single Environment=ETCD_DATA_DIR=/web/etcd/data/etcd-single Environment=ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 Environment=ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380 Environment=ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd-single:2380 Environment=ETCD_ADVERTISE_CLIENT_URLS=http://etcd-single:2379 Environment=ETCD_INITIAL_CLUSTER_STATE=new Environment=ETCD_INITIAL_CLUSTER_TOKEN=etcd-single Environment=ETCD_INITIAL_CLUSTER=etcd-single=http://etcd-single:2380 ExecStart=/usr/local/bin/etcd [Install] WantedBy=multi-user.target  启动
+systemctl daemon-reload systemctl restart etcd  创建网络
+etcdctl --endpoints http://etcd-single:2379 set /coreos.com/network/config '{&quot;NetWork&quot;:&quot;10.0.0.0/16&quot;,&quot;SubnetLen&quot;:24,&quot;Backend&quot;:{&quot;Type&quot;:&quot;vxlan&quot;}}'  三、安装 flannel 使用 yum 安装 安装
+yum install flannel -y  配置
     </article>
     
 </div>

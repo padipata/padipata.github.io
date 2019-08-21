@@ -1,0 +1,473 @@
+<!doctype html>
+<html>
+<head>
+    <base href="/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="author" content="padipata">
+
+<meta name="description" content="">
+
+<title>CentOS7.x 安装 k8s 集群</title>
+<meta name="generator" content="Hugo 0.55.6" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/pojoaque.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" rel="stylesheet" type="text/css">
+<link  href="https://padipata.github.io//css/theme.min.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+<div class="page-container container-fluid">
+<div class="col-md-3 menu">
+    <nav class="col-md-3">
+    
+    <h3 class="home-link"><a href="https://padipata.github.io/">Root</a></h3>
+    <div id="last-posts" class="open">
+        <h3 data-open="last-posts">padipata blog - Most recent posts</h3>
+        <ul>
+            
+            <li><a href="https://padipata.github.io/linux/k8s/">CentOS7.x 安装 k8s 集群</a></li>
+            
+            <li><a href="https://padipata.github.io/zatan/pocuang/">破窗效应与代码质量</a></li>
+            
+            <li><a href="https://padipata.github.io/mysql/mycat/">mysql&#43;mycat搭建高可用集群，主从复制，读写分离</a></li>
+            
+            <li><a href="https://padipata.github.io/net/https/">https介绍及中间人攻击</a></li>
+            
+            <li><a href="https://padipata.github.io/vue/yinanzazheng/">vue疑难杂症</a></li>
+            
+            <li><a href="https://padipata.github.io/javascript/kaobei/">谈谈JavaScript的深浅拷贝</a></li>
+            
+        </ul>
+    </div>
+    
+
+    
+
+    
+</nav>
+
+</div>
+<div class="col-md-9 content">
+
+<h1>CentOS7.x 安装 k8s 集群</h1>
+<h4>Published 08-21-2019 11:51:05</h4>
+
+
+
+<article>
+    
+
+<h5 id="环境-centos7-x">环境：CentOS7.x</h5>
+
+<h3 id="一-配置-hosts">一、配置 hosts</h3>
+
+<pre><code>vi /etc/hosts
+1.2.3.4 etcd-single
+</code></pre>
+
+<h3 id="二-安装单节点-etcd">二、安装单节点 etcd</h3>
+
+<p>下载</p>
+
+<pre><code>wget https://github.com/etcd-io/etcd/releases/download/v3.3.11/etcd-v3.3.11-linux-amd64.tar.gz
+</code></pre>
+
+<p>安装</p>
+
+<pre><code>tar xzf etcd-v3.3.11-linux-amd64.tar.gz
+cd etcd-v3.3.11-linux-amd64
+cp etcd* /usr/local/bin/
+</code></pre>
+
+<p>配置</p>
+
+<pre><code>vi /usr/lib/systemd/system/etcd.service
+[Unit]
+Description=etcd
+[Service]
+Environment=ETCD_NAME=etcd-single
+Environment=ETCD_DATA_DIR=/web/etcd/data/etcd-single
+Environment=ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+Environment=ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+Environment=ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd-single:2380
+Environment=ETCD_ADVERTISE_CLIENT_URLS=http://etcd-single:2379
+Environment=ETCD_INITIAL_CLUSTER_STATE=new
+Environment=ETCD_INITIAL_CLUSTER_TOKEN=etcd-single
+Environment=ETCD_INITIAL_CLUSTER=etcd-single=http://etcd-single:2380
+ExecStart=/usr/local/bin/etcd
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>启动</p>
+
+<pre><code>systemctl daemon-reload
+systemctl restart etcd
+</code></pre>
+
+<p>创建网络</p>
+
+<pre><code>etcdctl --endpoints http://etcd-single:2379  set /coreos.com/network/config '{&quot;NetWork&quot;:&quot;10.0.0.0/16&quot;,&quot;SubnetLen&quot;:24,&quot;Backend&quot;:{&quot;Type&quot;:&quot;vxlan&quot;}}'
+</code></pre>
+
+<h3 id="三-安装-flannel">三、安装 flannel</h3>
+
+<h5 id="使用-yum-安装">使用 yum 安装</h5>
+
+<p>安装</p>
+
+<pre><code>yum install flannel -y
+</code></pre>
+
+<p>配置</p>
+
+<pre><code>vi /etc/sysconfig/flanneld
+FLANNEL_ETCD_ENDPOINTS=&quot;http://etcd-single:2379&quot;
+FLANNEL_ETCD_PREFIX=&quot;/coreos.com/network&quot;
+FLANNEL_OPTIONS=&quot;--ip-masq=true --public-ip=$LOCAL_MACHINE_IP&quot;
+</code></pre>
+
+<p>其他步骤见手动安装</p>
+
+<h3 id="手动安装">手动安装</h3>
+
+<p>下载</p>
+
+<pre><code>wget https://github.com/coreos/flannel/releases/download/v0.11.0/flannel-v0.11.0-linux-amd64.tar.gz
+</code></pre>
+
+<p>安装</p>
+
+<pre><code>mkdir flannel
+tar xzf flannel-v0.11.0-linux-amd64.tar.gz -C flannel
+cd flannel
+cp flannel mk-docker-opts.sh /usr/local/bin/
+</code></pre>
+
+<p>配置</p>
+
+<pre><code>vi /usr/lib/systemd/system/flanneld.service
+[Unit]
+Description=flannel
+[Service]
+ExecStart=/usr/local/bin/flanneld \
+-etcd-endpoints=http://etcd-single:2379 \
+-etcd-prefix=/coreos.com/network \
+-ip-masq=true \
+-public-ip=$LOCAL_MACHINE_IP
+ExecStartPost=/usr/local/bin/mk-docker-opts.sh -k DOCKER_NETWORK_OPTIONS -d /run/flannel/docker
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>启动</p>
+
+<pre><code>systemctl daemon-reload
+systemctl restart flanneld
+</code></pre>
+
+<p>验证
+- 新网络设备</p>
+
+<pre><code>ifconfig
+ip a
+</code></pre>
+
+<p>看是否有名称开头为 flannel 的网络设备，查看其 inet 地址，如下：</p>
+
+<pre><code>3: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN 
+    link/ether 36:41:09:3f:31:59 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.33.0/32 scope global flannel.1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::3441:9ff:fe3f:3159/64 scope link 
+       valid_lft forever preferred_lft forever
+</code></pre>
+
+<p>新子网</p>
+
+<pre><code>etcdctl --endpoints http://etcd-single:2379 ls /coreos.com/network/subnets
+</code></pre>
+
+<p>看是否有新增 subnet，以上 flannel 的 inet 地址是否在 subnets 当中，如下：</p>
+
+<pre><code>/coreos.com/network/subnets/10.0.33.0-24
+</code></pre>
+
+<p>查看子网信息：</p>
+
+<pre><code>etcdctl --endpoints http://etcd-single:2379 get /coreos.com/network/subnets/10.0.33.0-24
+{&quot;PublicIP&quot;:&quot;$LOCAL_MACHINE_IP&quot;,&quot;BackendType&quot;:&quot;vxlan&quot;,&quot;BackendData&quot;:{&quot;VtepMAC&quot;:&quot;36:41:09:3f:31:59&quot;}}
+</code></pre>
+
+<h3 id="四-安装-docker">四、安装 docker</h3>
+
+<p>安装参考：<a href="https://docs.docker.com/install/linux/docker-ce/centos/#install-docker-ce?utm_source=hacpai.com">Get Docker CE for CentOS</a></p>
+
+<p>SET UP THE REPOSITORY</p>
+
+<pre><code>yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+</code></pre>
+
+<p>INSTALL DOCKER CE</p>
+
+<pre><code>yum install docker-ce docker-ce-cli containerd.io
+</code></pre>
+
+<p>配置添加</p>
+
+<pre><code>vi /usr/lib/systemd/system/docker.service
+EnvironmentFile=/run/flannel/docker
+ExecStart=/usr/bin/dockerd -H unix:// $DOCKER_NETWORK_OPTIONS
+</code></pre>
+
+<p>启动</p>
+
+<pre><code>systemctl daemon-reload
+systemctl restart docker
+</code></pre>
+
+<p>验证</p>
+
+<p>新网络设备</p>
+
+<pre><code>ifconfig
+ip a
+</code></pre>
+
+<p>看是否有名称开头为 docker 的网络设备，查看其 inet 地址，是否在 flannel 的 subnet 当中，如下：</p>
+
+<pre><code>3: flannel.1: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1450 qdisc noqueue state UNKNOWN 
+    link/ether 36:41:09:3f:31:59 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.33.0/32 scope global flannel.1
+       valid_lft forever preferred_lft forever
+    inet6 fe80::3441:9ff:fe3f:3159/64 scope link 
+       valid_lft forever preferred_lft forever
+4: docker0: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc noqueue state DOWN 
+    link/ether 02:42:e5:e3:22:6c brd ff:ff:ff:ff:ff:ff
+    inet 10.0.33.1/24 brd 10.0.33.255 scope global docker0
+       valid_lft forever preferred_lft forever
+</code></pre>
+
+<h3 id="五-配置-ip-forward">五、配置 ip forward</h3>
+
+<p>配置 iptables 设置允许 forward</p>
+
+<pre><code>iptables -P FORWARD ACCEPT
+iptables-save
+</code></pre>
+
+<p>配置 sysctl 文件</p>
+
+<pre><code>vi /etc/sysctl.conf
+net.ipv4.ip_forward=1
+net.ipv6.conf.all.forwarding=1
+sysctl -p
+cat /proc/sys/net/ipv4/conf/all/forwarding
+cat /proc/sys/net/ipv6/conf/all/forwarding
+</code></pre>
+
+<h3 id="六-重新启动-docker">六、重新启动 docker</h3>
+
+<pre><code>systemctl restart docker
+</code></pre>
+
+<h3 id="七-连通性测试">七、连通性测试</h3>
+
+<p>查看子网</p>
+
+<pre><code>etcdctl --endpoints http://etcd-single:2379 ls /coreos.com/network/subnets
+</code></pre>
+
+<p>当前所有的 subnets，如下：</p>
+
+<pre><code>/coreos.com/network/subnets/10.0.41.0-24
+/coreos.com/network/subnets/10.0.33.0-24
+</code></pre>
+
+<p>在各个 docker 上起一个 container</p>
+
+<pre><code>docker run -d --name c01 httpd
+</code></pre>
+
+<p>ping 测试</p>
+
+<pre><code>ping -c2 10.0.33.2
+ping -c2 10.0.41.2
+</code></pre>
+
+<p>能 ping 通则表示配置成功</p>
+
+<pre><code># ping -c2 10.0.33.2
+PING 10.0.33.2 (10.0.33.2) 56(84) bytes of data.
+64 bytes from 10.0.33.2: icmp_seq=1 ttl=64 time=0.053 ms
+64 bytes from 10.0.33.2: icmp_seq=2 ttl=64 time=0.068 ms
+
+--- 10.0.33.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 999ms
+rtt min/avg/max/mdev = 0.053/0.060/0.068/0.010 ms
+
+# ping -c2 10.0.41.2
+PING 10.0.41.2 (10.0.41.2) 56(84) bytes of data.
+64 bytes from 10.0.41.2: icmp_seq=1 ttl=63 time=180 ms
+64 bytes from 10.0.41.2: icmp_seq=2 ttl=63 time=180 ms
+
+--- 10.0.41.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 180.221/180.284/180.348/0.429 ms
+
+</code></pre>
+
+<h3 id="八-安装-k8s">八、安装 k8s</h3>
+
+<p>下载</p>
+
+<pre><code>wget https://github.com/kubernetes/kubernetes/releases/download/v1.13.3/kubernetes.tar.gz
+</code></pre>
+
+<p>安装</p>
+
+<pre><code>tar xzf kubernetes.tar.gz
+cd kubernetes
+bash cluster/get-kube-binaries.sh
+cp ./client/bin/kubectl /usr/local/bin/
+cd server
+tar xzf kubernetes-server-linux-amd64.tar.gz
+cd kubernetes/server/bin
+</code></pre>
+
+<p>只在 master 上：</p>
+
+<pre><code>cp  kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
+</code></pre>
+
+<pre><code>vi /usr/lib/systemd/system/kube-apiserver.service
+[Unit]
+Description=kube-apiserver
+[Service]
+ExecStart=/usr/local/bin/kube-apiserver \
+--etcd-servers=http://etcd-single:2379 \
+--etcd-prefix=/k8s/registry \
+--insecure-bind-address=0.0.0.0 \
+--insecure-port=8080
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl restart kube-apiserver
+systemctl status kube-apiserver
+netstat -anop | grep 6443
+netstat -anop | grep 8080
+</code></pre>
+
+<pre><code>vi /usr/lib/systemd/system/kube-scheduler.service
+[Unit]
+Description=kube-scheduler
+[Service]
+ExecStart=/usr/local/bin/kube-scheduler \
+--master=http://etcd-single:8080
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl restart kube-scheduler
+systemctl status kube-scheduler
+netstat -anop | grep 10259
+netstat -anop | grep 10251
+</code></pre>
+
+<pre><code>vi /usr/lib/systemd/system/kube-controller-manager.service
+[Unit]
+Description=kube-controller-manager
+[Service]
+ExecStart=/usr/local/bin/kube-controller-manager \
+--master=http://etcd-single:8080
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl restart kube-controller-manager
+systemctl status kube-controller-manager
+netstat -anop | grep 10257
+netstat -anop | grep 10252
+</code></pre>
+
+<p>所有 node 上：</p>
+
+<pre><code>cp kube-proxy kubelet /usr/local/bin/
+</code></pre>
+
+<pre><code>vi /usr/lib/systemd/system/kube-proxy.service
+[Unit]
+Description=kube-proxy
+[Service]
+ExecStart=/usr/local/bin/kube-proxy \
+--master=http://etcd-single:8080
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl restart kube-proxy
+systemctl status kube-proxy
+netstat -anop | grep 10256
+netstat -anop | grep 10249
+</code></pre>
+
+<pre><code>mkdir -p /opt/kubernetes/cfg
+vi /opt/kubernetes/cfg/kubelet.kubeconfig
+apiVersion: v1
+kind: Config
+clusters:
+  - cluster:
+      server: http://etcd-single:8080/
+    name: local
+contexts:
+  - context:
+      cluster: local
+    name: local
+current-context: local
+
+vi /usr/lib/systemd/system/kubelet.service
+[Unit]
+Description=kubelet
+[Service]
+ExecStart=/usr/local/bin/kubelet \
+--fail-swap-on=false \
+--hostname-override=$NODE_NAME \
+--kubeconfig=/opt/kubernetes/cfg/kubelet.kubeconfig
+[Install]
+WantedBy=multi-user.target
+
+systemctl daemon-reload
+systemctl restart kubelet
+systemctl status kubelet
+netstat -anop | grep 10255
+netstat -anop | grep 10250
+netstat -anop | grep 10248
+</code></pre>
+
+<p>查看注册的 nodes：</p>
+
+<pre><code>kubectl get nodes
+</code></pre>
+
+</article>
+
+
+
+</div>
+</div>
+<script src="https://padipata.github.io//js/theme.min.js" type="text/javascript"></script>
+
+
+</body>
+</html>
+

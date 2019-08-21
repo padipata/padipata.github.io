@@ -28,6 +28,8 @@
         <h3 data-open="last-posts">padipata blog - Most recent posts</h3>
         <ul>
             
+            <li><a href="https://padipata.github.io/linux/k8s/">CentOS7.x 安装 k8s 集群</a></li>
+            
             <li><a href="https://padipata.github.io/zatan/pocuang/">破窗效应与代码质量</a></li>
             
             <li><a href="https://padipata.github.io/mysql/mycat/">mysql&#43;mycat搭建高可用集群，主从复制，读写分离</a></li>
@@ -105,6 +107,17 @@ j1={ value: 'a', obj3:{ value2: 'c' }, arr:[1,2,3] } var obj2 = JSON.
 2、质量仪表盘：如果你在一个团队工作，必须让大家形成共同目标，并能实时感知项目的状态，否则，你清理代码的速度远比不上创造坏代码的速度。SonarQube是你的好帮手，你可以利用他的仪表盘功能，每天查看项目是否有新增坏代码。
 3、重构你的核心模块：如果你要经常修改的模块又是核心模块，建议你对其进行重构，重构时，利用单元测试进行覆盖，保障代码质量，同时，团队成本要进行review，防止把代码修改为你喜好的代码，而非大家能理解的代码。
 4、使用率低的模块：对于使用率或者修改率较低的代码，就让他随风去把，时间会带走他的。
+    </article>
+    
+    <article>
+        <h3><a href="https://padipata.github.io/linux/k8s/">CentOS7.x 安装 k8s 集群</a> - 2019-08-21 11:51:05</h3>
+        环境：CentOS7.x 一、配置 hosts vi /etc/hosts 1.2.3.4 etcd-single  二、安装单节点 etcd 下载
+wget https://github.com/etcd-io/etcd/releases/download/v3.3.11/etcd-v3.3.11-linux-amd64.tar.gz  安装
+tar xzf etcd-v3.3.11-linux-amd64.tar.gz cd etcd-v3.3.11-linux-amd64 cp etcd* /usr/local/bin/  配置
+vi /usr/lib/systemd/system/etcd.service [Unit] Description=etcd [Service] Environment=ETCD_NAME=etcd-single Environment=ETCD_DATA_DIR=/web/etcd/data/etcd-single Environment=ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 Environment=ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380 Environment=ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd-single:2380 Environment=ETCD_ADVERTISE_CLIENT_URLS=http://etcd-single:2379 Environment=ETCD_INITIAL_CLUSTER_STATE=new Environment=ETCD_INITIAL_CLUSTER_TOKEN=etcd-single Environment=ETCD_INITIAL_CLUSTER=etcd-single=http://etcd-single:2380 ExecStart=/usr/local/bin/etcd [Install] WantedBy=multi-user.target  启动
+systemctl daemon-reload systemctl restart etcd  创建网络
+etcdctl --endpoints http://etcd-single:2379 set /coreos.com/network/config '{&quot;NetWork&quot;:&quot;10.0.0.0/16&quot;,&quot;SubnetLen&quot;:24,&quot;Backend&quot;:{&quot;Type&quot;:&quot;vxlan&quot;}}'  三、安装 flannel 使用 yum 安装 安装
+yum install flannel -y  配置
     </article>
     
 </div>

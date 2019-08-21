@@ -6,10 +6,25 @@
     <description>Recent content on padipata blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 12 Jul 2019 18:10:09 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 21 Aug 2019 11:51:05 +0800</lastBuildDate>
     
 	<atom:link href="https://padipata.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>CentOS7.x 安装 k8s 集群</title>
+      <link>https://padipata.github.io/linux/k8s/</link>
+      <pubDate>Wed, 21 Aug 2019 11:51:05 +0800</pubDate>
+      
+      <guid>https://padipata.github.io/linux/k8s/</guid>
+      <description>环境：CentOS7.x 一、配置 hosts vi /etc/hosts 1.2.3.4 etcd-single  二、安装单节点 etcd 下载
+wget https://github.com/etcd-io/etcd/releases/download/v3.3.11/etcd-v3.3.11-linux-amd64.tar.gz  安装
+tar xzf etcd-v3.3.11-linux-amd64.tar.gz cd etcd-v3.3.11-linux-amd64 cp etcd* /usr/local/bin/  配置
+vi /usr/lib/systemd/system/etcd.service [Unit] Description=etcd [Service] Environment=ETCD_NAME=etcd-single Environment=ETCD_DATA_DIR=/web/etcd/data/etcd-single Environment=ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 Environment=ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380 Environment=ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd-single:2380 Environment=ETCD_ADVERTISE_CLIENT_URLS=http://etcd-single:2379 Environment=ETCD_INITIAL_CLUSTER_STATE=new Environment=ETCD_INITIAL_CLUSTER_TOKEN=etcd-single Environment=ETCD_INITIAL_CLUSTER=etcd-single=http://etcd-single:2380 ExecStart=/usr/local/bin/etcd [Install] WantedBy=multi-user.target  启动
+systemctl daemon-reload systemctl restart etcd  创建网络
+etcdctl --endpoints http://etcd-single:2379 set /coreos.com/network/config &#39;{&amp;quot;NetWork&amp;quot;:&amp;quot;10.0.0.0/16&amp;quot;,&amp;quot;SubnetLen&amp;quot;:24,&amp;quot;Backend&amp;quot;:{&amp;quot;Type&amp;quot;:&amp;quot;vxlan&amp;quot;}}&#39;  三、安装 flannel 使用 yum 安装 安装
+yum install flannel -y  配置</description>
+    </item>
     
     <item>
       <title>破窗效应与代码质量</title>
